@@ -1,0 +1,91 @@
+QPushButton {
+    border: none;
+    color: $primary;
+    text-decoration: underline;
+}
+QPushButton:hover {
+    border: none;
+    color: $hover;
+    text-decoration: none;
+}
+
+QToolButton#linkbutton {
+    border: none;
+    background: none;
+    color: $primary;
+    text-decoration: underline;
+    font-size: 11px;
+    padding-right: 10px;
+    padding-left: 5px;
+}
+QToolButton#linkbutton:hover {
+    border: none;
+    background-color: none;
+    color: $hover;
+    text-decoration: none;
+}
+
+QToolButton {
+    border: 1px solid $primary;
+    border-radius: 2px;
+    background-color: $primary;
+    padding-right: 25px;
+    padding-left: 25px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: white;
+    font-size: 14px;
+}
+QToolButton:hover {
+    border: 1px solid $hover;
+    background-color: $hover;
+}
+
+QToolButton:pressed {
+    border: 1px solid $primary;
+    background-color: $primary;
+}
+
+
+QMenu {
+    background-color: $primary;
+    border: 1px solid $primary;
+    border-radius: 2px;
+    color: white;
+    font-size: 14px;
+}
+
+
+QMenu:item{
+    font-size: 14px;
+    padding-left: 10px;
+    padding-right: 8px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid transparent;
+}
+
+QMenu:item:selected {
+    background-color: $hover;
+}
+
+QScrollBar:vertical {
+border: none;
+background: lightgray;
+width: 10px;
+margin: 0px 0px 0px 0px;
+}
+QScrollBar::handle:vertical {
+background: $hover;
+min-height: 20px;
+}
+QScrollBar:horizontal {
+border: none;
+background: lightgray;
+height: 10px;
+margin: 0px 0px 0px 0px;
+}
+QScrollBar::handle:horizontal {
+background: $hover;
+min-width: 20px;
+}
