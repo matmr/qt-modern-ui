@@ -74,18 +74,35 @@ def updateStylePatched(self):
 
 DockLabel.updateStyle = updateStylePatched
 
+class MaximizeButton(QtGui.QGraphicsPolygonItem):
+    def __init__(self):
+        polygon = QtGui.QPolygon()
+        polygon << QtCore.QPoint(10, 20) << QtCore.QPoint(20, 30) << QtCore.QPoint(40, 50)
+        super().__init__(polygon)
+
 class FramelessContainer(QtGui.QMainWindow):
 
-    def __init__(self):
+    def __init__(self, desktop_widget):
         super().__init__()
+
+        self.desktop_widget = desktop_widget
 
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.resize(1280, 1024)
         self.setWindowTitle('Hello')
+        self.margins = True
         self.setContentsMargins(50, 50,50, 50)
         # self.setContentsMargins(0, 0,0, 0)
         self.main_app = MainApp()
+
+        # scene = QtGui.QGraphicsScene(self)
+        # ellipseItem = MaximizeButton()
+        # scene.addItem(ellipseItem)
+        #
+        # view = QtGui.QGraphicsView(scene)
+        # view.move(20, 100)
+        # # view.show()
 
         self.setCentralWidget(self.main_app)
 
@@ -98,18 +115,54 @@ class FramelessContainer(QtGui.QMainWindow):
         # self.setWindowFlags(self.windowFlags() & QtCore.Qt.WindowMinimizeButtonHint)
 
 
+    def resizeEvent(self, event):
+        if self.margins:
+            pass
+        else:
+            self.setContentsMargins(50, 50, 50, 50)
+            self.margins = True
+
     def mouseMoveEvent(self, event):
         if event.buttons() and QtCore.Qt.LeftButton:
             self.move(event.globalPos() - self.mouse_drag_position)
             event.accept()
 
     def mousePressEvent(self, event):
+        if self.margins:
+            add = 50
+        else:
+            add = 0
+
         if event.button() == QtCore.Qt.LeftButton:
+            if (event.pos().x() < (self.width() - 10 - add)) and (event.pos().x() > (self.width()-20-add))\
+                    and (event.pos().y() < (20+add)) and (event.pos().y() > (10+add)):
+                self.close()
+
+            if (event.pos().x() < (self.width() - 25 - add)) and (event.pos().x() > (self.width()-35-add))\
+                    and (event.pos().y() < (20+add)) and (event.pos().y() > (10+add)):
+                if self.margins:
+                    rect = self.desktop_widget.availableGeometry(self)
+                    self.setContentsMargins(0, 0, 0, 0)
+                    self.setGeometry(rect)
+                    self.margins = False
+                else:
+                    self.resize(1280, 1024)
+
+                # self.showFullScreen()
+
+            if (event.pos().x() < (self.width() - 40 - add)) and (event.pos().x() > (self.width()-50-add))\
+                    and (event.pos().y() < (20+add)) and (event.pos().y() > (10+add)):
+                # TODO: Window goes to sleep (or sth.) here. FIX!
+                self.setWindowState(QtCore.Qt.WindowMinimized)
+                self.activateWindow()
+
             self.mouse_drag_position = event.globalPos() - self.frameGeometry().topLeft()
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Escape:
             self.close()
+
+
 
 class MainApp(QtGui.QWidget):
 
@@ -132,9 +185,6 @@ class MainApp(QtGui.QWidget):
         self.shadow.setBlurRadius(50)
         self.setGraphicsEffect(self.shadow)
 
-
-
-
     def paintEvent(self, event):
 
         self.painter = QtGui.QPainter()
@@ -147,6 +197,16 @@ class MainApp(QtGui.QWidget):
         self.painter.drawRect(0, 0, self.width()-1, self.height()-1)
 
         self.painter.drawLine(300, 180, 300, self.height())
+
+        self.painter.drawLine(self.width() - 20, 20, self.width() - 10, 10)
+        self.painter.drawLine(self.width() - 20, 10, self.width() - 10, 20)
+
+        self.painter.drawLine(self.width() - 35, 10, self.width() - 25, 10)
+        self.painter.drawLine(self.width() - 35, 20, self.width() - 25, 20)
+        self.painter.drawLine(self.width() - 35, 10, self.width() - 35, 20)
+        self.painter.drawLine(self.width() - 25, 10, self.width() - 25, 20)
+
+        self.painter.drawLine(self.width() - 50, 20, self.width() - 40, 20)
 
 
         self.painter.end()
@@ -317,9 +377,12 @@ if __name__ == '__main__':
 
     app = QtGui.QApplication(sys.argv)
 
+
+
     app.setFont(QtGui.QFont('Helvetica [Cronyx]'))
     # app.setStyle(QtGui.QStyleFactory.create('windows'))
-    main = FramelessContainer()
+    main = FramelessContainer(app.desktop())
     main.show()
+    # main.showFullScreen()
 
     sys.exit(app.exec_())
